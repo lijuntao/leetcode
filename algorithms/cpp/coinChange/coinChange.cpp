@@ -1,5 +1,5 @@
 // Source : https://leetcode.com/problems/coin-change/
-// Author : Calinescu Valentin
+// Author : Calinescu Valentin, Hao Chen
 // Date   : 2015-12-28
 
 /*************************************************************************************** 
@@ -25,6 +25,26 @@
  * cases.
  * 
  ***************************************************************************************/
+
+
+/* Recursive solution - TIME LIMIT ERROR */
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {  
+        int result = INT_MAX;
+        if ( amount == 0 ) return 0;
+        if ( amount < 0 ) return -1;
+        for (int i=0; i<coins.size(); i++) {
+            if ( amount - coins[i] < 0 ) continue;
+            int r = coinChange(coins, amount - coins[i]);
+            if ( r == -1 ) continue;
+            if (result > r )  result = r + 1;
+        }
+        return result == INT_MAX ? -1 : result;
+    }
+}
+
+
  /* 
  * Solution 1 - O(N * amount)
  * =========
@@ -58,5 +78,26 @@ public:
             return sol[amount];
         else
             return -1;
+    }
+};
+
+
+//Another DP implmentation, same idea above 
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        const int MAX = amount +1;
+        vector<int> dp(amount+1, MAX);
+        dp[0]=0;
+        
+        for(int i=1; i<=amount; i++) {
+            for (int j=0; j<coins.size(); j++){
+                if (i >= coins[j]) {
+                    dp[i] = min( dp[i], dp[i-coins[j]] + 1 );
+                }
+            }
+        }
+
+        return dp[amount]==MAX ? -1 : dp[amount];
     }
 };
